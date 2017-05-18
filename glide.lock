@@ -1,12 +1,14 @@
-hash: a8549e06e55d53d15a22b76159bc262e81333b30751d4c6fb85d024b76fc2a9f
-updated: 2017-05-17T12:37:51.005207337+05:30
+hash: 9cc028493642366542c114450225a1a6610cf2244e2113f5b411f6023a8bda80
+updated: 2017-05-18T15:25:00.678966162+05:30
 imports:
 - name: cloud.google.com/go
-  version: b3c6186447cac7ed6afbf7b72c47cf5c79b83932
+  version: e17fed5a9dab0de52aaeb5e9577ff221cdc5a996
   subpackages:
   - compute/metadata
 - name: github.com/auth0/go-jwt-middleware
   version: 5493cabe49f7bfa6e2ec444a09d334d90cd4e2bd
+- name: github.com/baijum/logger
+  version: 109b4aa7555227378b198599f5ee8e2385e41f02
 - name: github.com/boltdb/bolt
   version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
 - name: github.com/dgrijalva/jwt-go
@@ -37,6 +39,10 @@ imports:
   - internal
   - jws
   - jwt
+- name: golang.org/x/sys
+  version: 478fcf54317e52ab69f40bb4c7a1520288d7f7ea
+  subpackages:
+  - unix
 - name: google.golang.org/appengine
   version: ca59ef35f409df61fa4a5f8290ff289b37eccfb8
   subpackages:

@@ -2,13 +2,15 @@ package config
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/kelseyhightower/envconfig"
 )
 
 // configuration represent all configurations
 type configuration struct {
-	DataDir           string   `default:"./data/" split_words:"true"`
+	DataDir           string   `default:"" split_words:"true"`
 	HTTPAddress       string   `default:":8080" envconfig:"HTTP_ADDRESS"`
 	TokenPrivateKey   string   `split_words:"true"`
 	TokenPublicKey    string   `split_words:"true"`
@@ -23,6 +25,13 @@ var Config configuration
 
 // DatabaseFile provides the location of database file
 func (c *configuration) DatabaseFile() string {
+	if c.DataDir == "" {
+		p, _ := filepath.Abs(os.Args[0])
+		p = filepath.Dir(p)
+		p = filepath.Join(p, "data")
+		os.Mkdir(p, 0755)
+		c.DataDir = p
+	}
 	return c.DataDir + "kins.db"
 }
 
