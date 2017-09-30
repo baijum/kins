@@ -1,4 +1,4 @@
-package project
+package item
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 	"github.com/boltdb/bolt"
 )
 
-func TestProjectCreate(t *testing.T) {
+func TestItemCreate(t *testing.T) {
 	err := db.DB.Update(func(tx *bolt.Tx) error {
-		err := tx.DeleteBucket([]byte(db.ProjectBucket))
+		err := tx.DeleteBucket([]byte(db.ItemBucket))
 		if err != nil {
 			return fmt.Errorf("delete bucket: %s", err)
 		}
-		_, err = tx.CreateBucket([]byte(db.ProjectBucket))
+		_, err = tx.CreateBucket([]byte(db.ItemBucket))
 		if err != nil {
 			return fmt.Errorf("create bucket: %s", err)
 		}
@@ -26,9 +26,12 @@ func TestProjectCreate(t *testing.T) {
 		return
 	}
 
-	s := Schema{Name: "somename", Description: "Some description"}
-	err = s.create()
+	s := Schema{Title: "sometitle", Description: "Some description"}
+	id, err := s.Create()
 	if err != nil {
 		t.Error(err)
+	}
+	if id <= 0 {
+		t.Errorf("Data not inserted. ID: %#v", id)
 	}
 }

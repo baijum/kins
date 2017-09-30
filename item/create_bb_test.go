@@ -1,4 +1,4 @@
-package project_test
+package item_test
 
 import (
 	"bytes"
@@ -8,22 +8,22 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strconv"
 	"testing"
 
-	"github.com/boltdb/bolt"
-
 	"github.com/baijum/kins/db"
-	. "github.com/baijum/kins/project"
+	. "github.com/baijum/kins/item"
 	"github.com/baijum/kins/route"
+	"github.com/boltdb/bolt"
 )
 
-func TestProjectCreateHandler(t *testing.T) {
+func TestItemCreateHandler(t *testing.T) {
 	err := db.DB.Update(func(tx *bolt.Tx) error {
-		err := tx.DeleteBucket([]byte(db.ProjectBucket))
+		err := tx.DeleteBucket([]byte(db.ItemBucket))
 		if err != nil {
 			return fmt.Errorf("delete bucket: %s", err)
 		}
-		_, err = tx.CreateBucket([]byte(db.ProjectBucket))
+		_, err = tx.CreateBucket([]byte(db.ItemBucket))
 		if err != nil {
 			return fmt.Errorf("create bucket: %s", err)
 		}
@@ -38,9 +38,9 @@ func TestProjectCreateHandler(t *testing.T) {
 	defer ts.Close()
 	n := []byte(`{
   "data": {
-    "type": "projects",
+    "type": "items",
     "attributes": {
-      "name": "somename",
+      "title": "Some Title",
       "description": "Some description"
     }
   }
@@ -53,13 +53,18 @@ func TestProjectCreateHandler(t *testing.T) {
 		return
 	}
 
-	req, _ := http.NewRequest("POST", ts.URL+"/api/v1/projects", bytes.NewReader(n))
+	req, _ := http.NewRequest("POST", ts.URL+"/api/v1/items", bytes.NewReader(n))
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		err := resp.Body.Close()
+		if err != nil {
+			t.Fatal("Unable to close body: ", err)
+		}
+	}()
 
 	respPayload := make(map[string]Data)
 	decoder2 := json.NewDecoder(resp.Body)
@@ -70,6 +75,14 @@ func TestProjectCreateHandler(t *testing.T) {
 	respData := respPayload["data"]
 	reqData := reqPayload["data"]
 	reqData.ID = respData.ID
+	id, err := strconv.Atoi(reqData.ID)
+	if err != nil {
+		t.Fatal("Wrong ID", err)
+	}
+	if id <= 0 {
+		t.Errorf("ID is not 1 or above: %#v", id)
+	}
+
 	if !reflect.DeepEqual(reqData, respData) {
 		t.Errorf("Data not matching. \nOriginal: %#v\nNew Data: %#v", reqData, respData)
 	}

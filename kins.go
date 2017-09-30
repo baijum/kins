@@ -1,13 +1,15 @@
 package main
 
 import (
+	"github.com/urfave/negroni"
+
 	"github.com/baijum/kins/auth"
-	_ "github.com/baijum/kins/auth/google"
 	"github.com/baijum/kins/config"
 	"github.com/baijum/kins/middleware"
 	"github.com/baijum/kins/route"
+
+	_ "github.com/baijum/kins/auth/google"
 	_ "github.com/baijum/kins/web"
-	"github.com/urfave/negroni"
 )
 
 func main() {

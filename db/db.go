@@ -19,6 +19,7 @@ var (
 // common buckets
 const (
 	ProjectBucket = "project"
+	ItemBucket    = "item"
 )
 
 func createBucket(db *bolt.DB, name string) error {
@@ -47,6 +48,10 @@ func init() {
 
 	err = createBucket(DB, ProjectBucket)
 	if err != nil {
-		log.Fatal("Unable to create 'project' bucket: ", err)
+		log.Fatalf("Unable to create '%s' bucket: %s", ProjectBucket, err)
+	}
+	err = createBucket(DB, ItemBucket)
+	if err != nil {
+		log.Fatalf("Unable to create '%s' bucket: %s", ItemBucket, err)
 	}
 }
